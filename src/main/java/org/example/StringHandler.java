@@ -24,33 +24,23 @@ public class StringHandler extends AbstractHandler {
         if (line.length() < shortString) { shortString = line.length(); }
     }
 
-    public long getLongString() {
-        return longString;
-    }
-
-    public long getShortString() {
-        return shortString;
-    }
-
-    public long getCount() {
-        return count;
-    }
-
     public void printStringStatistic() {
-        if (this.getCount() == 0) return;
+        if (this.count == 0) return;
 
         if (this.statisticMode == StatisticMode.SHORT) {
-            System.out.printf(Locale.US, "%d elements were written to %sstrings.txt",
-                    this.getCount(),
-                    this.prefix);
+            System.out.printf(Locale.US, "%d elements were written to %s%s",
+                    this.count,
+                    this.prefix,
+                    this.fileName);
         }
 
         if (this.statisticMode == StatisticMode.FULL) {
-            System.out.printf(Locale.US, "%d elements were written to %sstrings.txt, the size of the shortest line is %d, the size of the longest line is %d",
-                    this.getCount(),
+            System.out.printf(Locale.US, "%d elements were written to %s%s, the size of the shortest line is %d, the size of the longest line is %d",
+                    this.count,
                     this.prefix,
-                    this.getShortString(),
-                    this.getLongString());
+                    this.fileName,
+                    this.shortString,
+                    this.longString);
         }
     }
 }

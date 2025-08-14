@@ -18,6 +18,8 @@ public class NumberHandler extends AbstractHandler {
 
     @Override
     public void process(String line) {
+        //в рамках задачи BigDecimal на целых числах работает аналогично BigInteger
+        //поэтому обработка всех видов чисел объединена в одном методе
         BigDecimal parsed = new BigDecimal(line);
         if (isFirstEntry) {
             initializePrintWriter(path);
@@ -32,42 +34,28 @@ public class NumberHandler extends AbstractHandler {
         if (parsed.compareTo(min) < 0) { min = parsed; }
     }
 
-    public BigDecimal getMax() {
-        return max;
-    }
-
-    public BigDecimal getMin() {
-        return min;
-    }
-
-    public BigDecimal getSum() {
-        return sum;
-    }
-
-    public long getCount() {
-        return count;
-    }
-
     public BigDecimal getAverage() {
         return sum.divide(BigDecimal.valueOf(count), RoundingMode.HALF_UP);
     }
 
     public void printNumberStatistic() {
-        if (this.getCount() == 0) return;
+        if (this.count == 0) return;
 
         if (this.statisticMode == StatisticMode.SHORT) {
-            System.out.printf(Locale.US, "%d elements were written to %sintegers.txt\n",
-                    this.getCount(),
-                    this.prefix);
+            System.out.printf(Locale.US, "%d elements were written to %s%s\n",
+                    this.count,
+                    this.prefix,
+                    this.fileName);
         }
 
         if (this.statisticMode == StatisticMode.FULL) {
-            System.out.printf(Locale.US, "%d elements were written to %sintegers.txt, min is %s, max is %s, sum is %s, average is %s.\n",
-                    this.getCount(),
+            System.out.printf(Locale.US, "%d elements were written to %s%s, min is %s, max is %s, sum is %s, average is %s.\n",
+                    this.count,
                     this.prefix,
-                    this.getMin().toPlainString(),
-                    this.getMax().toPlainString(),
-                    this.getSum().toPlainString(),
+                    this.fileName,
+                    this.min.toPlainString(),
+                    this.max.toPlainString(),
+                    this.sum.toPlainString(),
                     this.getAverage().toPlainString());
         }
     }

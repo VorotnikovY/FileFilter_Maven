@@ -7,6 +7,7 @@ public abstract class AbstractHandler implements Closeable {
     protected boolean configAppend;
     protected StatisticMode statisticMode;
     protected String prefix;
+    protected String fileName = "";
     protected Path path = null;
     protected PrintWriter writer = null;
 
@@ -15,10 +16,13 @@ public abstract class AbstractHandler implements Closeable {
     protected AbstractHandler(DataType type, Config config) {
         if (type == DataType.INTEGER) {
             path = Path.of(config.getNewPath() + config.getPrefix() + "integers.txt");
+            fileName = "integers.txt";
         } else if (type == DataType.FLOAT) {
             path = Path.of(config.getNewPath() + config.getPrefix() + "float.txt");
+            fileName = "float.txt";
         } else if (type == DataType.STRING) {
             path = Path.of(config.getNewPath() + config.getPrefix() + "strings.txt");
+            fileName = "strings.txt";
         } else {
             System.out.println("Unknown data type");
         }
