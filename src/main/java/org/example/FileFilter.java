@@ -6,7 +6,13 @@ public class FileFilter {
 
     public static void main(String[] args) {
 
-        Config config = new Config(args);
+        Config config = null;
+        try {
+            config = ConfigReader.readConfig(args);
+        } catch (RuntimeException e)    {
+            System.out.println(e.getMessage());
+            System.exit(1);
+        }
 
         try (NumberHandler integerHandler = new NumberHandler(DataType.INTEGER, config);
              NumberHandler floatHandler = new NumberHandler(DataType.FLOAT, config);
