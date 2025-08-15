@@ -18,6 +18,7 @@ public class FileFilter {
              NumberHandler floatHandler = new NumberHandler(DataType.FLOAT, config);
              StringHandler stringHandler = new StringHandler(DataType.STRING, config)) {
 
+
             for (String fileName : config.getFileNames()) {
                 try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
                     String line;

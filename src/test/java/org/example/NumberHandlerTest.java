@@ -1,5 +1,6 @@
 package org.example;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -14,17 +15,32 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 class NumberHandlerTest {
+    private NumberHandler handler;
+    private List<String> fileNames = Arrays.asList("test_in1.txt", "test_in2.txt");
+
+    @AfterEach
+    public void closeHandler() {
+        if (handler != null) {
+            handler.close();
+        }
+    }
+
+    public void flushHandler()  {
+        if (handler.writer != null) {
+            handler.writer.flush();
+        }
+    }
 
     @Test
     public void processIntegerTest(@TempDir Path tempDir) throws IOException {
-        List<String> fileNames = Arrays.asList("test_in1.txt", "test_in2.txt");
+
         Config config = new Config(fileNames,true,tempDir.toString(), "test_", StatisticMode.FULL);
-        NumberHandler handler = new NumberHandler(DataType.INTEGER, config);
+        handler = new NumberHandler(DataType.INTEGER, config);
 
         handler.process("10");
         handler.process("20");
         handler.process("30");
-        handler.close();
+        flushHandler();
 
         Path outputFile = tempDir.resolve("test_integers.txt");
         assertTrue(Files.exists(outputFile));
@@ -42,14 +58,13 @@ class NumberHandlerTest {
 
     @Test
     public void processFloatTest(@TempDir Path tempDir) throws IOException {
-        List<String> fileNames = Arrays.asList("test_in1.txt", "test_in2.txt");
         Config config = new Config(fileNames,true,tempDir.toString(), "test_", StatisticMode.FULL);
-        NumberHandler handler = new NumberHandler(DataType.FLOAT, config);
+        handler = new NumberHandler(DataType.FLOAT, config);
 
         handler.process("1.5");
         handler.process("2.5");
         handler.process("3.5");
-        handler.close();
+        flushHandler();
 
         Path outputFile = tempDir.resolve("test_floats.txt");
         assertTrue(Files.exists(outputFile));
@@ -69,9 +84,8 @@ class NumberHandlerTest {
     @Test
     public void emptyInputTest(@TempDir Path tempDir)    {
         Config config = new Config(List.of(),true,tempDir.toString(), "test_", StatisticMode.FULL);
-        NumberHandler handler = new NumberHandler(DataType.INTEGER, config);
+        handler = new NumberHandler(DataType.INTEGER, config);
 
-        handler.close();
 
         assertNull(handler.getMin());
         assertNull(handler.getMax());
@@ -83,12 +97,11 @@ class NumberHandlerTest {
     public void appendModeTest(@TempDir Path tempDir) throws IOException {
         Files.writeString(tempDir.resolve("test_integers.txt"), "created\n");
 
-        List<String> fileNames = Arrays.asList("test_in1.txt", "test_in2.txt");
         Config config = new Config(fileNames,true,tempDir.toString(), "test_", StatisticMode.SHORT);
-        NumberHandler handler = new NumberHandler(DataType.INTEGER, config);
+        handler = new NumberHandler(DataType.INTEGER, config);
 
         handler.process("10");
-        handler.close();
+        flushHandler();
 
         List<String> expectedLines = List.of("created", "10");
         List<String> actualLines = Files.readAllLines(tempDir.resolve("test_integers.txt"));
@@ -97,38 +110,36 @@ class NumberHandlerTest {
 
     @Test
     public void shortStatisticTest(@TempDir Path tempDir) {
-        List<String> fileNames = Arrays.asList("test_in1.txt", "test_in2.txt");
         Config config = new Config(fileNames,true,tempDir.toString(), "test_", StatisticMode.SHORT);
-        NumberHandler handler = new NumberHandler(DataType.INTEGER, config);
+        handler = new NumberHandler(DataType.INTEGER, config);
 
         handler.process("10");
         handler.process("20");
         handler.process("30");
+        flushHandler();
 
         ByteArrayOutputStream printStatistic = new ByteArrayOutputStream();
         System.setOut(new PrintStream(printStatistic));
 
         handler.printNumberStatistic();
-        handler.close();
 
         assertEquals("3 elements were written to test_integers.txt\n", printStatistic.toString());
     }
 
     @Test
     public void fullStatisticTest(@TempDir Path tempDir) {
-        List<String> fileNames = Arrays.asList("test_in1.txt", "test_in2.txt");
         Config config = new Config(fileNames,true,tempDir.toString(), "test_", StatisticMode.FULL);
-        NumberHandler handler = new NumberHandler(DataType.INTEGER, config);
+        handler = new NumberHandler(DataType.INTEGER, config);
 
         handler.process("10");
         handler.process("20");
         handler.process("30");
+        flushHandler();
 
         ByteArrayOutputStream printStatistic = new ByteArrayOutputStream();
         System.setOut(new PrintStream(printStatistic));
 
         handler.printNumberStatistic();
-        handler.close();
 
         assertEquals("3 elements were written to test_integers.txt, min is 10, max is 30, sum is 60, average is 20.\n", printStatistic.toString());
     }

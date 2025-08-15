@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 class ConfigReaderTest {
+    private Throwable thrown;
 
     @Test
     public void correctParamsTest() {
@@ -22,42 +23,56 @@ class ConfigReaderTest {
     @Test
     public void noPrefixProvided()    {
         String[] args = {"-f", "-a", "-p", "in1.txt", "in2.txt"};
-        assertThrows(IllegalParameterException.class, () -> ConfigReader.readConfig(args), "Parameter \"-p\" is used, but no prefix provided, or path is incorrect. Exiting program.");
+        thrown = assertThrows(IllegalParameterException.class, () -> ConfigReader.readConfig(args), ConfigReader.NO_PREFIX_ERROR_MESSAGE);
+        assertEquals(ConfigReader.NO_PREFIX_ERROR_MESSAGE, thrown.getMessage());
     }
 
     @Test
     public void noPathProvided()    {
         String[] args = {"-f", "-a", "-o", "-p", "sample-", "in1.txt", "in2.txt"};
-        assertThrows(IllegalParameterException.class, () -> ConfigReader.readConfig(args), "Parameter \"-o\" is used, but no new path provided, or path is incorrect. Exiting program.");
+        thrown = assertThrows(IllegalParameterException.class, () -> ConfigReader.readConfig(args));
+        assertEquals(ConfigReader.NO_NEW_PATH_ERROR_MESSAGE, thrown.getMessage());
     }
 
     @Test
     public void multipleStatParams()    {
         String[] args = {"-f", "-a", "-s", "-p", "sample-", "in1.txt", "in2.txt"};
-        assertThrows(IllegalParameterException.class, () -> ConfigReader.readConfig(args), "Incorrect arguments: both types of statistics are chosen. Exiting program.");
+        thrown = assertThrows(IllegalParameterException.class, () -> ConfigReader.readConfig(args));
+        assertEquals(ConfigReader.MULTIPLE_STATISTIC_PARAMETERS_ERROR_MESSAGE, thrown.getMessage());
     }
 
     @Test
     public void multipleAppendParams()    {
         String[] args = {"-f", "-a", "-a", "-p", "sample-", "in1.txt", "in2.txt"};
-        assertThrows(IllegalParameterException.class, () -> ConfigReader.readConfig(args), "Multiple append parameters are provided. Exiting program.");
+        thrown = assertThrows(IllegalParameterException.class, () -> ConfigReader.readConfig(args));
+        assertEquals(ConfigReader.MULTIPLE_APPEND_ERROR_MESSAGE, thrown.getMessage());
     }
 
     @Test
     public void multiplePathParams()    {
         String[] args = {"-f", "-a", "-o", "D:/Work", "-o", "-p", "sample-", "in1.txt", "in2.txt"};
-        assertThrows(IllegalParameterException.class, () -> ConfigReader.readConfig(args), "Multiple new path parameters are provided. Exiting program.");
+        thrown = assertThrows(IllegalParameterException.class, () -> ConfigReader.readConfig(args));
+        assertEquals(ConfigReader.MULTIPLE_NEW_PATH_ERROR_MESSAGE, thrown.getMessage());
     }
 
     @Test
     public void multiplePrefixParams()    {
         String[] args = {"-f", "-a", "-p", "sample-", "-p", "in1.txt", "in2.txt"};
-        assertThrows(IllegalParameterException.class, () -> ConfigReader.readConfig(args), "Multiple prefix parameters are provided. Exiting program.");
+        thrown = assertThrows(IllegalParameterException.class, () -> ConfigReader.readConfig(args));
+        assertEquals(ConfigReader.MULTIPLE_PREFIX_ERROR_MESSAGE, thrown.getMessage());
     }
 
     @Test
     public void noParams()    {
         String[] args = new String[0];
-        assertThrows(IllegalParameterException.class, () -> ConfigReader.readConfig(args), "Parameters not provided");
+        thrown = assertThrows(IllegalParameterException.class, () -> ConfigReader.readConfig(args));
+        assertEquals(ConfigReader.NO_PARAMETERS_ERROR_MESSAGE, thrown.getMessage());
+    }
+
+    @Test
+    public void noFiles()    {
+        String[] args = {"-f", "-a", "-p", "sample-", "-o", "D:/Work"};
+        thrown = assertThrows(IllegalParameterException.class, () -> ConfigReader.readConfig(args));
+        assertEquals(ConfigReader.NO_FILENAMES_ERROR_MESSAGE, thrown.getMessage());
     }
 }
