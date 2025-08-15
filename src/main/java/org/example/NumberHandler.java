@@ -38,6 +38,22 @@ public class NumberHandler extends AbstractHandler {
         return sum.divide(BigDecimal.valueOf(count), RoundingMode.HALF_UP);
     }
 
+    public BigDecimal getMax() {
+        return max;
+    }
+
+    public BigDecimal getMin() {
+        return min;
+    }
+
+    public BigDecimal getSum() {
+        return sum;
+    }
+
+    public long getCount() {
+        return count;
+    }
+
     public void printNumberStatistic() {
         if (this.count == 0) return;
 

@@ -9,7 +9,7 @@ public class FileFilter {
         Config config = null;
         try {
             config = ConfigReader.readConfig(args);
-        } catch (RuntimeException e)    {
+        } catch (IllegalParameterException e)    {
             System.out.println(e.getMessage());
             System.exit(1);
         }

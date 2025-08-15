@@ -15,13 +15,13 @@ public abstract class AbstractHandler implements Closeable {
 
     protected AbstractHandler(DataType type, Config config) {
         if (type == DataType.INTEGER) {
-            path = Path.of(config.getNewPath() + config.getPrefix() + "integers.txt");
+            path = Path.of(config.getNewPath() + "/" + config.getPrefix() + "integers.txt");
             fileName = "integers.txt";
         } else if (type == DataType.FLOAT) {
-            path = Path.of(config.getNewPath() + config.getPrefix() + "float.txt");
+            path = Path.of(config.getNewPath() + "/" + config.getPrefix() + "floats.txt");
             fileName = "float.txt";
         } else if (type == DataType.STRING) {
-            path = Path.of(config.getNewPath() + config.getPrefix() + "strings.txt");
+            path = Path.of(config.getNewPath() + "/" + config.getPrefix() + "strings.txt");
             fileName = "strings.txt";
         } else {
             System.out.println("Unknown data type");

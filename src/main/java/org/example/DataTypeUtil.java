@@ -6,6 +6,7 @@ import java.math.BigInteger;
 public class DataTypeUtil {
 
     public static DataType defineDataType(String line) {
+
         if (line.isEmpty()) return DataType.STRING;
 
         try {
