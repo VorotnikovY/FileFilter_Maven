@@ -1,21 +1,23 @@
 package org.example;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ConfigReader {
-    public static final String MULTIPLE_STATISTIC_PARAMETERS_ERROR_MESSAGE = "Incorrect arguments: both types of statistics are chosen. Exiting program.";
-    public static final String NO_PARAMETERS_ERROR_MESSAGE = "Parameters not provided";
-    public static final String MULTIPLE_APPEND_ERROR_MESSAGE = "Multiple append parameters are provided. Exiting program.";
-    public static final String MULTIPLE_NEW_PATH_ERROR_MESSAGE = "Multiple new path parameters are provided. Exiting program.";
-    public static final String MULTIPLE_PREFIX_ERROR_MESSAGE = "Multiple prefix parameters are provided. Exiting program.";
-    public static final String NO_NEW_PATH_ERROR_MESSAGE = "Parameter \"-o\" is used, but no new path provided, or path is incorrect. Exiting program.";
-    public static final String NO_PREFIX_ERROR_MESSAGE = "Parameter \"-p\" is used, but no prefix provided, or path is incorrect. Exiting program.";
-    public static final String NO_FILENAMES_ERROR_MESSAGE = "No filenames provided. Exiting program.";
+public class ConfigReaderUtil {
+
+    static final String MULTIPLE_STATISTIC_PARAMETERS_ERROR_MESSAGE = "Incorrect arguments: both types of statistics are chosen. Exiting program.";
+    static final String NO_PARAMETERS_ERROR_MESSAGE = "Parameters not provided";
+    static final String MULTIPLE_APPEND_ERROR_MESSAGE = "Multiple append parameters are provided. Exiting program.";
+    static final String MULTIPLE_NEW_PATH_ERROR_MESSAGE = "Multiple new path parameters are provided. Exiting program.";
+    static final String MULTIPLE_PREFIX_ERROR_MESSAGE = "Multiple prefix parameters are provided. Exiting program.";
+    static final String NO_NEW_PATH_ERROR_MESSAGE = "Parameter \"-o\" is used, but no new path provided, or path is incorrect. Exiting program.";
+    static final String NO_PREFIX_ERROR_MESSAGE = "Parameter \"-p\" is used, but no prefix provided, or path is incorrect. Exiting program.";
+    static final String NO_FILENAMES_ERROR_MESSAGE = "No filenames provided. Exiting program.";
 
 
-    public static Config readConfig(String[] args) throws RuntimeException  {
-
+    public static Config readConfig(String[] args) throws IllegalParameterException  {
 
         List<String> fileNames = new ArrayList<>();
         boolean isAppend = false;
@@ -66,7 +68,7 @@ public class ConfigReader {
                     break;
                 case "-p":
                     if (prefix.isEmpty()) {
-                        if (i + 1 >= args.length || args[i + 1].startsWith("-") || args[i + 1].endsWith(".txt")) {
+                        if (i + 1 >= args.length || args[i + 1].startsWith("-")) {
                             throw new IllegalParameterException(NO_PREFIX_ERROR_MESSAGE);
                         } else {
                             prefix = args[i + 1];
@@ -77,7 +79,11 @@ public class ConfigReader {
                     }
                     break;
                 default:
-                    fileNames.add(args[i]);
+                    if (Files.isRegularFile(Path.of(args[i]))) {
+                        fileNames.add(args[i]);
+                    } else {
+                        System.out.printf("There is no file with name \"%s\"\n", args[i]);
+                    }
             }
         }
         if (fileNames.isEmpty())  {

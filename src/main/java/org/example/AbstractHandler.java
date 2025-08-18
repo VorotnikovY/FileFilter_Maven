@@ -14,21 +14,22 @@ public abstract class AbstractHandler implements Closeable {
     public abstract void process(String line);
 
     protected AbstractHandler(DataType type, Config config) {
+        Path configPath = Path.of(config.newPath());
         if (type == DataType.INTEGER) {
-            path = Path.of(config.getNewPath()).resolve(config.getPrefix() + "integers.txt");
+            path = configPath.resolve(config.prefix() + "integers.txt");
             fileName = "integers.txt";
         } else if (type == DataType.FLOAT) {
-            path = Path.of(config.getNewPath()).resolve(config.getPrefix() + "floats.txt");
+            path = configPath.resolve(config.prefix() + "floats.txt");
             fileName = "float.txt";
         } else if (type == DataType.STRING) {
-            path = Path.of(config.getNewPath()).resolve(config.getPrefix() + "strings.txt");
+            path = configPath.resolve(config.prefix() + "strings.txt");
             fileName = "strings.txt";
         } else {
             System.out.println("Unknown data type");
         }
         configAppend = config.isAppend();
-        statisticMode = config.getStatisticMode();
-        prefix = config.getPrefix();
+        statisticMode = config.statisticMode();
+        prefix = config.prefix();
     }
 
     public void initializePrintWriter(Path path) {
