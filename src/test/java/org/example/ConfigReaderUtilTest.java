@@ -83,4 +83,11 @@ class ConfigReaderUtilTest {
         IllegalParameterException thrown = assertThrows(IllegalParameterException.class, () -> ConfigReaderUtil.readConfig(args));
         assertEquals(ConfigReaderUtil.NO_FILENAMES_ERROR_MESSAGE, thrown.getMessage());
     }
+
+    @Test
+    public void wrongPath()    {
+        String[] args = {"-f", "-a", "-p", "sample-", "-o", "wrong|path", "in1.txt", "in2.txt"};
+        IllegalParameterException thrown = assertThrows(IllegalParameterException.class, () -> ConfigReaderUtil.readConfig(args));
+        assertEquals(ConfigReaderUtil.WRONG_PATH_ERROR_MESSAGE, thrown.getMessage());
+    }
 }
