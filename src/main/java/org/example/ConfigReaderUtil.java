@@ -56,7 +56,7 @@ public class ConfigReaderUtil {
                     break;
                 case "-o":
                     if (newPath.isEmpty()) {
-                        if (i + 1 >= args.length || args[i + 1].startsWith("-")) {
+                        if (isParameterValueMissing(args, i)) {
                             throw new IllegalParameterException(NO_NEW_PATH_ERROR_MESSAGE);
                         } else if (isPathValid(args[i + 1])){
                             newPath = args[i + 1];
@@ -70,7 +70,7 @@ public class ConfigReaderUtil {
                     break;
                 case "-p":
                     if (prefix.isEmpty()) {
-                        if (i + 1 >= args.length || args[i + 1].startsWith("-")) {
+                        if (isParameterValueMissing(args, i)) {
                             throw new IllegalParameterException(NO_PREFIX_ERROR_MESSAGE);
                         } else {
                             prefix = args[i + 1];
@@ -102,5 +102,9 @@ public class ConfigReaderUtil {
         } catch (InvalidPathException e) {
             return false;
         }
+    }
+
+    private static boolean isParameterValueMissing(String[] args, int i)   {
+        return (i + 1 >= args.length) || (args[i + 1].startsWith("-"));
     }
 }
