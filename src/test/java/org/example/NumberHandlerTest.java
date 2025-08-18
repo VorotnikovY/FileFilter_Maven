@@ -14,7 +14,7 @@ import java.util.Arrays;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
-class NumberHandlerTest extends AbstractHandlerTest {
+class NumberHandlerTest {
     private NumberHandler handler;
     private final List<String> fileNames = Arrays.asList("test_in1.txt", "test_in2.txt");
 

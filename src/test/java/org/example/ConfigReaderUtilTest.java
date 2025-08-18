@@ -1,14 +1,23 @@
 package org.example;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+
+import java.nio.file.Files;
+import java.nio.file.Path;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class ConfigReaderUtilTest {
 
     @Test
-    public void correctParamsTest() {
+    public void correctParamsTest(@TempDir Path tempDir) throws Exception {
+        Path in1 = tempDir.resolve("in1.txt");
+        Path in2 = tempDir.resolve("in2.txt");
+        Files.createFile(in1);
+        Files.createFile(in2);
 
-        String[] args = {"-f", "-a", "-p", "sample-", "-o", "D:/Work", "in1.txt", "in2.txt"};
+        String[] args = {"-f", "-a", "-p", "sample-", "-o", "D:/Work", in1.toString(), in2.toString()};
         Config config = ConfigReaderUtil.readConfig(args);
 
         assertEquals(StatisticMode.FULL, config.statisticMode());
