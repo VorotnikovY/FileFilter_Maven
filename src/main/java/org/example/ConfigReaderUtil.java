@@ -1,6 +1,7 @@
 package org.example;
 
 import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,13 +16,13 @@ public class ConfigReaderUtil {
     static final String NO_NEW_PATH_ERROR_MESSAGE = "Parameter \"-o\" is used, but no new path provided, or path is incorrect. Exiting program.";
     static final String NO_PREFIX_ERROR_MESSAGE = "Parameter \"-p\" is used, but no prefix provided, or path is incorrect. Exiting program.";
     static final String NO_FILENAMES_ERROR_MESSAGE = "No filenames provided. Exiting program.";
+    static final String WRONG_PATH_ERROR_MESSAGE = "Provided path is invalid. Exiting program.";
 
 
     public static Config readConfig(String[] args) throws IllegalParameterException  {
 
         List<String> fileNames = new ArrayList<>();
-        boolean isAppend = false;
-        boolean firstAppend = true;
+        Boolean isAppend = null;
         String newPath = "";
         String prefix = "";
         StatisticMode statisticMode = null;
@@ -47,20 +48,21 @@ public class ConfigReaderUtil {
                     }
                     break;
                 case "-a":
-                    if (firstAppend) {
+                    if (isAppend == null) {
                         isAppend = true;
-                        firstAppend = false;
                     } else {
                         throw new IllegalParameterException(MULTIPLE_APPEND_ERROR_MESSAGE);
                     }
                     break;
                 case "-o":
                     if (newPath.isEmpty()) {
-                        if (i + 1 >= args.length || args[i + 1].length() <= 2) {
+                        if (i + 1 >= args.length || args[i + 1].startsWith("-")) {
                             throw new IllegalParameterException(NO_NEW_PATH_ERROR_MESSAGE);
-                        } else {
+                        } else if (isPathValid(args[i + 1])){
                             newPath = args[i + 1];
                             i++;
+                        } else {
+                            throw new IllegalParameterException(WRONG_PATH_ERROR_MESSAGE);
                         }
                     } else {
                         throw new IllegalParameterException(MULTIPLE_NEW_PATH_ERROR_MESSAGE);
@@ -79,6 +81,7 @@ public class ConfigReaderUtil {
                     }
                     break;
                 default:
+                    if (isAppend == null) { isAppend = false; }
                     if (Files.isRegularFile(Path.of(args[i]))) {
                         fileNames.add(args[i]);
                     } else {
@@ -90,5 +93,14 @@ public class ConfigReaderUtil {
             throw new IllegalParameterException(NO_FILENAMES_ERROR_MESSAGE);
         }
         return new Config(fileNames, isAppend, newPath, prefix, statisticMode);
+    }
+
+    private static boolean isPathValid(String pathStr) {
+        try {
+            Path path = Path.of(pathStr).toAbsolutePath();
+            return true;
+        } catch (InvalidPathException e) {
+            return false;
+        }
     }
 }
