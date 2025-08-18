@@ -30,7 +30,7 @@ class ConfigReaderUtilTest {
 
     @Test
     public void noPrefixProvided()    {
-        String[] args = {"-f", "-a", "-p", "in1.txt", "in2.txt"};
+        String[] args = {"-f", "-a", "in1.txt", "in2.txt", "-p"};
         IllegalParameterException thrown = assertThrows(IllegalParameterException.class, () -> ConfigReaderUtil.readConfig(args), ConfigReaderUtil.NO_PREFIX_ERROR_MESSAGE);
         assertEquals(ConfigReaderUtil.NO_PREFIX_ERROR_MESSAGE, thrown.getMessage());
     }

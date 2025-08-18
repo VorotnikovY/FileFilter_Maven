@@ -68,7 +68,7 @@ public class ConfigReaderUtil {
                     break;
                 case "-p":
                     if (prefix.isEmpty()) {
-                        if (i + 1 >= args.length || args[i + 1].startsWith("-") || args[i + 1].contains(".")) {
+                        if (i + 1 >= args.length || args[i + 1].startsWith("-")) {
                             throw new IllegalParameterException(NO_PREFIX_ERROR_MESSAGE);
                         } else {
                             prefix = args[i + 1];
